@@ -1,0 +1,41 @@
+def floyd_warshall(n, edges):
+    INF = float('inf')
+    D = [[INF] * n for _ in range(n)]
+    nxt = [[None] * n for _ in range(n)]
+
+    for i in range(n):
+        D[i][i] = 0
+
+    for u, v, w in edges:
+        D[u][v] = w
+        nxt[u][v] = v
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if D[i][k] + D[k][j] < D[i][j]:
+                    D[i][j] = D[i][k] + D[k][j]
+                    nxt[i][j] = nxt[i][k]
+
+    for i in range(n):
+        if D[i][i] < 0:
+            raise ValueError("Negative cycle detected")
+
+    return D, nxt
+
+def fw_path(nxt, i, j):
+    if nxt[i][j] is None:
+        return []
+    path = [i]
+    while i != j:
+        i = nxt[i][j]
+        path.append(i)
+    return path
+
+def all_pairs_bf(n, edges):
+    vertices = list(range(n))
+    result = []
+    for s in vertices:
+        dist, _, _ = bellman_ford(vertices, edges, s)
+        result.append([dist[v] for v in vertices])
+    return result
